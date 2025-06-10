@@ -1,0 +1,41 @@
+Launch and Flight Commands: 
+| Command String     | Description                               |
+| ------------------ | ----------------------------------------- |
+| `launch`           | Initiates launch sequence                 |
+| `abort`            | Aborts launch (emergency stop)            |
+| `cut_engine`       | Stops thrust (if using propulsion)        |
+| `deploy_parachute` | Triggers parachute deployment             |
+| `arm_parachute`    | Arms the parachute system (before launch) |
+| `reset_altimeter`  | Resets onboard altitude reference         |
+
+Payload & Camera Control:
+| Command String  | Description                           |
+| --------------- | ------------------------------------- |
+| `camera_on`     | Starts camera recording or stream     |
+| `camera_off`    | Stops camera                          |
+| `take_picture`  | Captures a still image                |
+| `save_snapshot` | Stores current video frame to SD card |
+
+Telemetry & Diagnostics:
+| Command String    | Description                          |
+| ----------------- | ------------------------------------ |
+| `send_status`     | Sends current telemetry to ground    |
+| `report_battery`  | Sends battery voltage                |
+| `report_position` | Sends GNSS coordinates               |
+| `report_attitude` | Sends pitch, roll, yaw or quaternion |
+
+System Control & Debug:
+| Command String                | Description                             |
+| ----------------------------- | --------------------------------------- |
+| `reboot`                      | Soft reboot of ESP32                    |
+| `reset_log`                   | Clears command log file                 |
+| `sync_time:<YYYYMMDD-HHMMSS>` | Set RTC time from ground                |
+| `set_mode:manual`             | Switches control mode to manual         |
+| `set_mode:auto`               | Switches control mode to autonomous     |
+
+Others:
+| Command String     | Description                            |
+| ------------------ | -------------------------------------- |
+| `calibrate_imu`    | Calibrate IMU sensor                   |
+| `calibrate_gnss`   | Reset/refresh GNSS module              |
+| `deploy_secondary` | Deploy a second-stage payload or chute |
