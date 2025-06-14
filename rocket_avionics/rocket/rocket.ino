@@ -1,72 +1,46 @@
 #include <SPI.h>
 #include <LoRa.h>
-#include <Wire.h>
-#include <RTClib.h>
-#include <SD.h>
 
-#define SD_CS 5  // SD card CS pin
-RTC_DS3231 rtc;
+// LoRa pin mapping
+#define LORA_CS     5
+#define LORA_RST    14
+#define LORA_DIO0   26
 
 void setup() {
   Serial.begin(115200);
+  delay(1000);
+  Serial.println("Rocket telemetry system starting...");
 
-  // Init RTC
-  if (!rtc.begin()) {
-    Serial.println("Couldn't find RTC");
-    while (true);
-  }
+  LoRa.setPins(LORA_CS, LORA_RST, LORA_DIO0);
 
-  if (rtc.lostPower()) {
-    Serial.println("RTC lost power, setting default time...");
-    rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));  // Set to compile time
-  }
-
-  // Init SD card
-  if (!SD.begin(SD_CS)) {
-    Serial.println("SD card initialization failed!");
-    while (true);
-  }
-  Serial.println("SD card ready");
-
-  // Init LoRa
-  if (!LoRa.begin(915E6)) {
+  if (!LoRa.begin(433E6)) {
     Serial.println("LoRa init failed!");
-    while (true);
+    while (true) delay(100);
   }
-  Serial.println("LoRa receiver ready");
+
+  Serial.println("LoRa init OK. Waiting for ground commands...");
 }
 
 void loop() {
   int packetSize = LoRa.parsePacket();
   if (packetSize) {
-    String command = LoRa.readString();
-    Serial.println("Received: " + command);
-
-    // Get current time
-    DateTime now = rtc.now();
-    String timestamp = String(now.year()) + "-" +
-                       String(now.month()) + "-" +
-                       String(now.day()) + " " +
-                       String(now.hour()) + ":" +
-                       String(now.minute()) + ":" +
-                       String(now.second());
-
-    // Format log entry
-    String logEntry = "[" + timestamp + "] " + command;
-
-    // Log to SD
-    File logFile = SD.open("/command_log.txt", FILE_APPEND);
-    if (logFile) {
-      logFile.println(logEntry);
-      logFile.close();
-      Serial.println("Logged: " + logEntry);
-    } else {
-      Serial.println("Failed to open log file");
+    String received = "";
+    while (LoRa.available()) {
+      received += (char)LoRa.read();
     }
 
+    Serial.print("Received command: ");
+    Serial.println(received);
+
     // Send ACK back
+    String ack = "ACK:" + received;
     LoRa.beginPacket();
-    LoRa.print("ACK: " + command);
+    LoRa.print(ack);
     LoRa.endPacket();
+
+    Serial.print("Sent: ");
+    Serial.println(ack);
   }
+
+  delay(10); // Prevent watchdog resets
 }
