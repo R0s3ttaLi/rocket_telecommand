@@ -11,7 +11,7 @@ String inputBuffer = "";
 
 void setup() {
   Serial.begin(115200);
-  // while (!Serial);  // Optional: hang until serial is ready
+  // while (!Serial);  // hang until serial is ready
 
   Serial.println("Ground station booting...");
 
@@ -26,7 +26,7 @@ void setup() {
 
   Serial.println("LoRa init success.");
 
-  // RTC setup (optional)
+  // RTC setup
   /*
   if (!rtc.begin()) {
     Serial.println("RTC not found. Continuing without time.");

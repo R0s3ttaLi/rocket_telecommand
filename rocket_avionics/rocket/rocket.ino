@@ -29,18 +29,26 @@ void loop() {
       received += (char)LoRa.read();
     }
 
-    Serial.print("Received command: ");
-    Serial.println(received);
-
     // Send ACK back
+    logMessage("Received command: " + received);
+
     String ack = "ACK:" + received;
     LoRa.beginPacket();
     LoRa.print(ack);
     LoRa.endPacket();
 
-    Serial.print("Sent: ");
+    logMessage("Sent: " + ack);
     Serial.println(ack);
   }
 
   delay(10); // Prevent watchdog resets
 }
+
+void logMessage(const String &msg) {
+  unsigned long ms = millis();
+  Serial.print("[");
+  Serial.print(ms / 1000);  // seconds since boot
+  Serial.print("s] ");
+  Serial.println(msg);
+}
+
